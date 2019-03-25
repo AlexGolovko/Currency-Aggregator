@@ -85,7 +85,7 @@ public class CurrencyRatesDTO {
         StringWriter stringWriter = new StringWriter();
         try (JsonGenerator jsonGenerator = jsonFactory.createGenerator(stringWriter)) {
             jsonGenerator.writeStartObject();
-           //TODO Use reflection for add field name
+            //TODO Use reflection for add field name
             jsonGenerator.writeFieldName("CurrencyRate");
             jsonGenerator.writeStartArray();
             while (iterator.hasNext()) {
@@ -104,9 +104,6 @@ public class CurrencyRatesDTO {
             e.printStackTrace();
             logger.error(e.getMessage());
         }
-
-
-
         return gson.fromJson(stringWriter.toString(), CurrencyRates.class);
     }
 }
