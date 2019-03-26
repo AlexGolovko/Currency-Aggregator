@@ -2,15 +2,16 @@ package com.golovkobalak.dto;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.golovkobalak.model.CurrencyRates;
+import com.golovkobalak.model.CurrencyRate;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
 import com.opencsv.CSVReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.bind.JAXBContext;
@@ -24,24 +25,28 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 
+@Component
+public class CurrencyRateDTO {
 
-public class CurrencyRatesDTO {
-    private static final Logger logger = LogManager.getLogger(CurrencyRatesDTO.class);
+    CurrencyRateDTO(){}
+
+
+    private static final Logger logger = LogManager.getLogger(CurrencyRateDTO.class);
     private static final GsonBuilder gsonBuilder = new GsonBuilder();
     private static final Gson gson = gsonBuilder.create();
 
-    public static CurrencyRates convertUploadFileToObj(MultipartFile file) {
+    public static CurrencyRate convertUploadFileToObj(MultipartFile file) {
         if (file.isEmpty()) {
             logger.error("File is Empty");
         }
         final String bankName = file.getOriginalFilename().substring(0, file.getOriginalFilename().indexOf("."));
         final String fileType = file.getOriginalFilename().substring(file.getOriginalFilename().indexOf(".") + 1);
-        CurrencyRates rates = null;
+        CurrencyRate rates = null;
         try (InputStream stream = file.getInputStream()) {
             switch (fileType) {
 
                 case "json":
-                    rates = gson.fromJson(String.valueOf(IOUtils.toCharArray(stream, StandardCharsets.UTF_8)), CurrencyRates.class);
+                    rates = gson.fromJson(String.valueOf(IOUtils.toCharArray(stream, StandardCharsets.UTF_8)), CurrencyRate.class);
                     break;
 
                 case "xml":
@@ -55,21 +60,19 @@ public class CurrencyRatesDTO {
             }
         } catch (IOException | FileUploadException e) {
             logger.error(e.getMessage());
-            e.printStackTrace();
         }
         rates.setBankName(bankName);
-        rates.setInitDate(new Date());
         return rates;
 
 
     }
 
-    private static CurrencyRates convertXmlToObj(InputStream xmlFile) {
+    private static CurrencyRate convertXmlToObj(InputStream xmlFile) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(CurrencyRates.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(CurrencyRate.class);
             Unmarshaller unmarshaller = null;
             unmarshaller = jaxbContext.createUnmarshaller();
-            return (CurrencyRates) unmarshaller.unmarshal(xmlFile);
+            return (CurrencyRate) unmarshaller.unmarshal(xmlFile);
         } catch (JAXBException e) {
             e.printStackTrace();
         }
@@ -77,7 +80,7 @@ public class CurrencyRatesDTO {
         return null;
     }
 
-    private static CurrencyRates convertCsvToObj(InputStream cvsFile) {
+    private static CurrencyRate convertCsvToObj(InputStream cvsFile) {
         CSVReader csvReader = new CSVReader(new InputStreamReader(cvsFile));
         Iterator<String[]> iterator = csvReader.iterator();
         String[] headers = iterator.next();
@@ -104,6 +107,6 @@ public class CurrencyRatesDTO {
             e.printStackTrace();
             logger.error(e.getMessage());
         }
-        return gson.fromJson(stringWriter.toString(), CurrencyRates.class);
+        return gson.fromJson(stringWriter.toString(), CurrencyRate.class);
     }
 }

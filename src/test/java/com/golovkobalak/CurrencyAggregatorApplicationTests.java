@@ -1,4 +1,4 @@
-package com.golovkobalak.CurrencyAggregator;
+package com.golovkobalak;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
