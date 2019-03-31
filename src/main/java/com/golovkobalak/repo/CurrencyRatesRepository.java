@@ -1,10 +1,10 @@
 package com.golovkobalak.repo;
 
-import com.golovkobalak.model.CurrencyRate;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import com.golovkobalak.model.CurrencyRate;
 
-public interface CurrencyRatesRepository extends PagingAndSortingRepository<CurrencyRate,Long> {
+public interface CurrencyRatesRepository extends PagingAndSortingRepository<CurrencyRate, Long> {
 
 
 }
