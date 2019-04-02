@@ -1,23 +1,38 @@
 package com.golovkobalak.model;
 
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.gson.annotations.SerializedName;
-
+import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
 
 @Data
+@Entity
+public class CurrencyRate {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="bank")
+    private Bank bank;
+    @CsvBindByName(column = "name")
+    @SerializedName("name")
+    @JacksonXmlProperty(localName = "name")
+    private String currencyName;
+    @CsvBindByName(column = "buy")
+    @SerializedName("buy")
+    @JacksonXmlProperty(localName = "buy")
+    private double buyPrice;
+    @CsvBindByName(column = "sell")
+    @SerializedName("sell")
+    @JacksonXmlProperty(localName = "sell")
+    private double sellPrice;
+}
+
+/*@Data
 @NoArgsConstructor
 @XmlRootElement(name = "CurrencyRates")
 @Entity
@@ -37,5 +52,6 @@ public class CurrencyRate {
 	@XmlElement(name = "CurrencyRate")
 	public List<CurrencyPrice> getCurrencyData() {
 		return currencyData;
-	}
-}
+	}*/
+
+

@@ -1,10 +1,16 @@
- {
- "currencyRate":[
- {"name":"USD",
- "buy":25.9,
- "sell":26.1},
- {"name":"EUR",
- "buy":30.0,
- "sell":31.0},
- {"name":"CHF",
- "buy":26.0}]}
+[
+  {
+    "name": "USD",
+    "buy": 25.9,
+    "sell": 26.1
+  },
+  {
+    "name": "EUR",
+    "buy": 30.0,
+    "sell": 31.0
+  },
+  {
+    "name": "CHF",
+    "buy": 26.0
+  }
+]

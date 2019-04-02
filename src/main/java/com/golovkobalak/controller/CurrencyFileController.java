@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.xml.ws.FaultAction;
+import java.util.List;
 
 @RestController
 @RequestMapping("/CurrencyAggregator/upload")
@@ -30,16 +31,16 @@ public class CurrencyFileController {
     }
 
     @PostMapping
-    public String postCurrencyFile(@RequestParam(value = "file")  MultipartFile uploadFile) {
+    public String postCurrencyFile(@RequestParam(value = "file") MultipartFile uploadFile) {
         if (uploadFile.isEmpty()) {
             logger.error("File is Empty");
             return "failUpload";
         }
         final String fileName = uploadFile.getOriginalFilename();
         final String contentType = uploadFile.getContentType();
-        CurrencyRate rates = CurrencyRateDTO.convertUploadFileToObj(uploadFile);
+        List<CurrencyRate> rates = CurrencyRateDTO.convertUploadFileToObj(uploadFile);
         logger.error(rates.toString());
-        currencyRatesRepository.save(rates);
+        currencyRatesRepository.saveAll(rates);
         return "successUpload";
     }
 

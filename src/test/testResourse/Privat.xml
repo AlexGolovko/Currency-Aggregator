@@ -1,16 +1,17 @@
-<CurrencyRates>
-<CurrencyRate >
-    <name>USD</name>
-    <buy>25.9</buy>
-    <sell>26.1</sell>
-</CurrencyRate>
-<CurrencyRate >
-    <name>EUR</name>
-    <buy>30</buy>
-    <sell>31</sell>
-</CurrencyRate>
-<CurrencyRate >
-    <name>CHF</name>
-    <buy>26</buy>
-</CurrencyRate>
-</CurrencyRates>
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <CurrencyRate>
+        <name>USD</name>
+        <buy>25.9</buy>
+        <sell>26.1</sell>
+    </CurrencyRate>
+    <CurrencyRate>
+        <name>EUR</name>
+        <buy>30</buy>
+        <sell>31</sell>
+    </CurrencyRate>
+    <CurrencyRate>
+        <name>CHF</name>
+        <buy>26</buy>
+    </CurrencyRate>
+</root>
