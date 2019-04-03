@@ -1,27 +1,31 @@
 package com.golovkobalak.model;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.google.gson.annotations.SerializedName;
 import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 
 @Data
 @Entity
+@Component
 public class CurrencyRate {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name="bank")
+    @JoinColumn(name = "bank")
     private Bank bank;
     @CsvBindByName(column = "name")
     @SerializedName("name")
     @JacksonXmlProperty(localName = "name")
-    private String currencyName;
+    private String name;
     @CsvBindByName(column = "buy")
     @SerializedName("buy")
     @JacksonXmlProperty(localName = "buy")

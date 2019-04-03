@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 @Data
 @JacksonXmlRootElement
-public class WrapperCureencyRate {
+public class WrapperCurrencyRate {
 
     @JacksonXmlProperty(localName = "CurrencyRate")
     @JacksonXmlElementWrapper(useWrapping = false)

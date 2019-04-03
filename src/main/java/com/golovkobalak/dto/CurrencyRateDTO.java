@@ -19,6 +19,7 @@ import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -28,11 +29,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.CSVReader;
 
-@Component
+@Service
 public class CurrencyRateDTO {
 
-    CurrencyRateDTO() {
-    }
+
 
 
     private static final Logger logger = LogManager.getLogger(CurrencyRateDTO.class);

@@ -1,18 +1,14 @@
 package com.golovkobalak.dto;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlCData;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.golovkobalak.model.CurrencyRate;
-import com.google.gson.reflect.TypeToken;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.List;
 
+@Service
 public class ParserXmlToList {
 
     //@JacksonXmlElementWrapper(useWrapping = false)
@@ -24,7 +20,7 @@ public class ParserXmlToList {
 
 
         try {
-           rates=xmlMapper.readValue(stream, WrapperCureencyRate.class).getRoot();
+           rates=xmlMapper.readValue(stream, WrapperCurrencyRate.class).getRoot();
 
         } catch (IOException e) {
             e.printStackTrace();

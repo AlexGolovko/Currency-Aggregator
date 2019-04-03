@@ -6,6 +6,7 @@ import com.golovkobalak.repo.CurrencyRatesRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,9 +21,11 @@ public class CurrencyFileController {
 
     private final CurrencyRatesRepository currencyRatesRepository;
 
+
     @Autowired
     public CurrencyFileController(CurrencyRatesRepository currencyRatesRepository) {
         this.currencyRatesRepository = currencyRatesRepository;
+
     }
 
     @GetMapping
@@ -31,17 +34,18 @@ public class CurrencyFileController {
     }
 
     @PostMapping
-    public String postCurrencyFile(@RequestParam(value = "file") MultipartFile uploadFile) {
+    public HttpStatus postCurrencyFile(@RequestParam(value = "file") MultipartFile uploadFile) {
         if (uploadFile.isEmpty()) {
             logger.error("File is Empty");
-            return "failUpload";
+            return HttpStatus.BAD_REQUEST;
         }
-        final String fileName = uploadFile.getOriginalFilename();
-        final String contentType = uploadFile.getContentType();
+        final String bankName = uploadFile.getOriginalFilename().substring(0, uploadFile.getOriginalFilename().indexOf("."));
+        if(currencyRatesRepository.existsCurrencyRateByBank_BankName(bankName))return HttpStatus.BAD_REQUEST;
+
         List<CurrencyRate> rates = CurrencyRateDTO.convertUploadFileToObj(uploadFile);
         logger.error(rates.toString());
         currencyRatesRepository.saveAll(rates);
-        return "successUpload";
+        return HttpStatus.OK;
     }
 
 }
