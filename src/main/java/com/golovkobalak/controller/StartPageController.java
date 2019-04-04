@@ -24,30 +24,36 @@ public class StartPageController {
 
     }
 
-    @GetMapping
+    @GetMapping(value = "/")
     public String getStartPage() {
         return "uploadForm";
     }
 
-    @PostMapping(value = "/rates")
-    public List<CurrencyRate> getRatesFromAllBanks(@RequestParam(name = "currency") String currency, @RequestParam("operType") String operationType, @RequestParam("sorting") String sorting) {
-        if (!operationType.toUpperCase().equals("BUY") || !operationType.toUpperCase().equals("SELL")) return null;
-        if (!currencyRatesRepository.existsByName(currency.toUpperCase())) return null;
-
+    @GetMapping(value = "/rates")
+    public Map<String, Double> getRatesFromAllBanks(@RequestParam(name = "currency") String currency, @RequestParam("operType") String operationType, @RequestParam("sorting") String sorting) {
+        isPresentData(currency, operationType);
         Optional<List<CurrencyRate>> resultOptional = currencyRatesRepository.findAllByName(currency.toUpperCase());
-        if (!resultOptional.isPresent()) return null;
         List<CurrencyRate> result = resultOptional.get();
-        List<Map<String, Double>> bankName2Price =new ArrayList<>();
+        if (sorting.isEmpty())
+            return getNotSortedRates(result, operationType);
+        if (sorting.toUpperCase().equals("ASC"))
+            return getSortedRatesOrderByAsc(result, operationType);
+        if (sorting.toUpperCase().equals("DESC"))
+            return getSortedRatesOrderByDesc(result, operationType);
+        return null;
+       /* LinkedHashMap<String, Double> bankName2Price = new LinkedHashMap<>();
         if (sorting != null) {
             if (operationType.toUpperCase().equals("BUY")) {
                 result.sort(Comparator.comparingDouble(CurrencyRate::getBuyPrice));
             } else {
-                result.sort(Comparator.comparing(CurrencyRate::getSellPrice));
+                result.sort(Comparator.comparingDouble(CurrencyRate::getSellPrice));
             }
 
             if (sorting.toUpperCase().equals("ASC")) {
 
-                result.forEach((rate)->{bankName2Price.add(new HashMap<>().put(rate.getBank().getBankName(),rate.getBuyPrice()))});
+                result.forEach((rate) -> {
+                    bankName2Price.put(rate.getBank().getBankName(), rate.getBuyPrice());
+                });
             }
 
         } else {
@@ -58,7 +64,48 @@ public class StartPageController {
         Iterator<CurrencyRate> iterator = result.get().iterator();
         Map<Bank, Double> bankDoubleMap = new HashMap<>();
         iterator.forEachRemaining(rate -> bankDoubleMap.put(rate.getBank(), rate.));
-        return null;
+        return null;*/
     }
+
+    private Map<String, Double> getSortedRatesOrderByDesc(List<CurrencyRate> currencyRates, String operationType) {
+        Map<String, Double> result = new TreeMap<>();
+        if (operationType.toUpperCase().equals("BUY")) {
+            currencyRates.sort(Comparator.comparing(CurrencyRate::getBuyPrice).reversed());
+            currencyRates.forEach(rate -> result.put(rate.getBank().getBankName(), rate.getBuyPrice()));
+        } else {
+            currencyRates.sort(Comparator.comparing(CurrencyRate::getSellPrice).reversed());
+            currencyRates.forEach(rate -> result.put(rate.getBank().getBankName(), rate.getSellPrice()));
+        }
+        return result;
+    }
+
+    private Map<String, Double> getSortedRatesOrderByAsc(List<CurrencyRate> currencyRates, String operationType) {
+        Map<String, Double> result = new TreeMap<>();
+        if (operationType.toUpperCase().equals("BUY")) {
+            currencyRates.sort(Comparator.comparing(CurrencyRate::getBuyPrice));
+            currencyRates.forEach(rate -> result.put(rate.getBank().getBankName(), rate.getBuyPrice()));
+        } else {
+            currencyRates.sort(Comparator.comparing(CurrencyRate::getSellPrice));
+            currencyRates.forEach(rate -> result.put(rate.getBank().getBankName(), rate.getSellPrice()));
+        }
+        return result;
+    }
+
+    private Map<String, Double> getNotSortedRates(List<CurrencyRate> currencyRateList, String operationType) {
+        Map<String, Double> result = new HashMap<>();
+        if (operationType.toUpperCase().equals("BUY")) {
+            currencyRateList.forEach(rate -> result.put(rate.getBank().getBankName(), rate.getBuyPrice()));
+        } else {
+            currencyRateList.forEach(rate -> result.put(rate.getBank().getBankName(), rate.getSellPrice()));
+        }
+        return result;
+    }
+
+    private boolean isPresentData(String currency, String operationType) {
+        if (!operationType.toUpperCase().equals("BUY") || !operationType.toUpperCase().equals("SELL")) return false;
+        if (!currencyRatesRepository.existsByName(currency.toUpperCase())) return false;
+        return true;
+    }
+
 
 }
