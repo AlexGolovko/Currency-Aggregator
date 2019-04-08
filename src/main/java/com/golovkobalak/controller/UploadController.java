@@ -10,28 +10,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
-import javax.xml.ws.FaultAction;
 import java.util.List;
 
 @RestController
 @RequestMapping("/CurrencyAggregator/upload")
-public class CurrencyFileController {
-    private static final Logger logger = LogManager.getLogger(CurrencyFileController.class);
+public class UploadController {
+    private static final Logger logger = LogManager.getLogger(UploadController.class);
 
     private final CurrencyRatesRepository currencyRatesRepository;
 
 
     @Autowired
-    public CurrencyFileController(CurrencyRatesRepository currencyRatesRepository) {
+    public UploadController(CurrencyRatesRepository currencyRatesRepository) {
         this.currencyRatesRepository = currencyRatesRepository;
 
     }
 
-    @GetMapping
-    public String getStartPage() {
-        return "GET ";
-    }
 
     @PostMapping
     public HttpStatus postCurrencyFile(@RequestParam(value = "file") MultipartFile uploadFile) {
@@ -40,9 +34,15 @@ public class CurrencyFileController {
             return HttpStatus.BAD_REQUEST;
         }
         final String bankName = uploadFile.getOriginalFilename().substring(0, uploadFile.getOriginalFilename().indexOf("."));
-        if(currencyRatesRepository.existsCurrencyRateByBank_BankName(bankName))return HttpStatus.BAD_REQUEST;
+        if (currencyRatesRepository.existsCurrencyRateByBank_BankName(bankName)) return HttpStatus.BAD_REQUEST;
 
         List<CurrencyRate> rates = CurrencyRateDTO.convertUploadFileToObj(uploadFile);
+        for (CurrencyRate rate : rates) {
+            rate.setAllowBuy(true);
+            rate.setAllowSell(true);
+        }
+
+
         logger.error(rates.toString());
         currencyRatesRepository.saveAll(rates);
         return HttpStatus.OK;

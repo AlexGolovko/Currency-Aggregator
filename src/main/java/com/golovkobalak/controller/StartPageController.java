@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@Controller("/CurrencyAggregator")
+@RestController
+@RequestMapping("/CurrencyAggregator")
 public class StartPageController {
 
     private final CurrencyRatesRepository currencyRatesRepository;
@@ -30,41 +31,48 @@ public class StartPageController {
     }
 
     @GetMapping(value = "/rates")
-    public Map<String, Double> getRatesFromAllBanks(@RequestParam(name = "currency") String currency, @RequestParam("operType") String operationType, @RequestParam("sorting") String sorting) {
-        isPresentData(currency, operationType);
+    public Map<String, Double> getRatesFromAllBanks(@RequestParam(name = "currency") String currency, @RequestParam("operType") String operationType, @RequestParam(value = "sorting", required = false) String sorting) {
+        if (!isPresentData(currency, operationType))
+            return Collections.EMPTY_MAP;
         Optional<List<CurrencyRate>> resultOptional = currencyRatesRepository.findAllByName(currency.toUpperCase());
         List<CurrencyRate> result = resultOptional.get();
-        if (sorting.isEmpty())
+        if (sorting==null)
             return getNotSortedRates(result, operationType);
         if (sorting.toUpperCase().equals("ASC"))
             return getSortedRatesOrderByAsc(result, operationType);
         if (sorting.toUpperCase().equals("DESC"))
             return getSortedRatesOrderByDesc(result, operationType);
         return null;
-       /* LinkedHashMap<String, Double> bankName2Price = new LinkedHashMap<>();
-        if (sorting != null) {
-            if (operationType.toUpperCase().equals("BUY")) {
-                result.sort(Comparator.comparingDouble(CurrencyRate::getBuyPrice));
-            } else {
-                result.sort(Comparator.comparingDouble(CurrencyRate::getSellPrice));
-            }
 
-            if (sorting.toUpperCase().equals("ASC")) {
+    }
 
-                result.forEach((rate) -> {
-                    bankName2Price.put(rate.getBank().getBankName(), rate.getBuyPrice());
-                });
-            }
-
-        } else {
-
+    @PutMapping(value = "/rates")
+    public CurrencyRate updateCurrencyRateOrSetBan(@RequestParam(name = "bank") String bankName,
+                                                   @RequestParam(name = "currency") String currency,
+                                                   @RequestParam("operType") String operationType,
+                                                   @RequestParam(value = "price", required = false) double price,
+                                                   @RequestParam(value = "allowOper", required = false) String allowOper) {
+        Optional<CurrencyRate> currencyRateOptional = currencyRatesRepository.findCurrencyRateByNameAndBank_BankName(currency, bankName);
+        if (!currencyRateOptional.isPresent()) return null;
+        CurrencyRate currencyRate = currencyRateOptional.get();
+        if (operationType.toUpperCase().equals("BUY"))
+            currencyRate.setBuyPrice(price);
+        if (operationType.toUpperCase().equals("SELL"))
+            currencyRate.setSellPrice(price);
+        if (allowOper != null && (allowOper.toUpperCase().equals("TRUE") || allowOper.toUpperCase().equals("FALSE"))) {
+            if (operationType.toUpperCase().equals("BUY")) currencyRate.setAllowBuy(Boolean.getBoolean(allowOper));
+            else currencyRate.setAllowSell(Boolean.getBoolean(allowOper));
         }
+        if (currencyRatesRepository.save(currencyRate) != null)
+            return currencyRate;
+        return null;
+    }
 
-
-        Iterator<CurrencyRate> iterator = result.get().iterator();
-        Map<Bank, Double> bankDoubleMap = new HashMap<>();
-        iterator.forEachRemaining(rate -> bankDoubleMap.put(rate.getBank(), rate.));
-        return null;*/
+    @DeleteMapping(value = "/rates")
+    public HttpStatus deleteAllCurrencyRatesForBank(@RequestParam(value = "bank") String bankName) {
+        if (!currencyRatesRepository.existsByBank_BankName(bankName)) return HttpStatus.BAD_REQUEST;
+        if (currencyRatesRepository.deleteCurrencyRatesByBank_BankName(bankName)) return HttpStatus.OK;
+        return HttpStatus.BAD_REQUEST;
     }
 
     private Map<String, Double> getSortedRatesOrderByDesc(List<CurrencyRate> currencyRates, String operationType) {
@@ -102,7 +110,7 @@ public class StartPageController {
     }
 
     private boolean isPresentData(String currency, String operationType) {
-        if (!operationType.toUpperCase().equals("BUY") || !operationType.toUpperCase().equals("SELL")) return false;
+        if (!(operationType.toUpperCase().equals("BUY") || operationType.toUpperCase().equals("SELL"))) return false;
         if (!currencyRatesRepository.existsByName(currency.toUpperCase())) return false;
         return true;
     }

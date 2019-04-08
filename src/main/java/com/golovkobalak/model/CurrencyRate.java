@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
 import lombok.Data;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Component
+@Scope("prototype")
 public class CurrencyRate {
 
     @Id
@@ -30,10 +32,18 @@ public class CurrencyRate {
     @SerializedName("buy")
     @JacksonXmlProperty(localName = "buy")
     private double buyPrice;
+    @CsvBindByName(column = "allowBuy")
+    @SerializedName("allowBuy")
+    @JacksonXmlProperty(localName = "allowBuy")
+    private boolean allowBuy;
     @CsvBindByName(column = "sell")
     @SerializedName("sell")
     @JacksonXmlProperty(localName = "sell")
     private double sellPrice;
+    @CsvBindByName(column = "allowSell")
+    @SerializedName("allowSell")
+    @JacksonXmlProperty(localName = "allowSell")
+    private boolean allowSell;
 }
 
 /*@Data
