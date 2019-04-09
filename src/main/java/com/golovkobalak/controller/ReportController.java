@@ -30,7 +30,7 @@ public class ReportController {
         GsonBuilder gsonBuilder = new GsonBuilder();
 
         List<String> resultOptional = currencyRatesRepository.findAllUniqueCurrencyName();
-        if (resultOptional==null) return Collections.emptyList();
+        if (resultOptional == null) return Collections.emptyList();
 
         List<String> currNames = resultOptional;
         for (String name : currNames) {

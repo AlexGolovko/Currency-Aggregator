@@ -11,16 +11,16 @@ import java.util.List;
 @Service
 public class ParserXmlToList {
 
-    //@JacksonXmlElementWrapper(useWrapping = false)
-    private static List<CurrencyRate>rates;
 
-    public static List<CurrencyRate>getListFrom(InputStream stream){
+    private static List<CurrencyRate> rates;
+
+    public static List<CurrencyRate> getListFrom(InputStream stream) {
 
         XmlMapper xmlMapper = new XmlMapper();
 
 
         try {
-           rates=xmlMapper.readValue(stream, WrapperCurrencyRate.class).getRoot();
+            rates = xmlMapper.readValue(stream, WrapperCurrencyRate.class).getRoot();
 
         } catch (IOException e) {
             e.printStackTrace();

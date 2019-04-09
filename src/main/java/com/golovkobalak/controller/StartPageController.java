@@ -1,13 +1,9 @@
 package com.golovkobalak.controller;
 
-import com.golovkobalak.model.Bank;
 import com.golovkobalak.model.CurrencyRate;
 import com.golovkobalak.repo.CurrencyRatesRepository;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -36,7 +32,7 @@ public class StartPageController {
             return Collections.EMPTY_MAP;
         Optional<List<CurrencyRate>> resultOptional = currencyRatesRepository.findAllByName(currency.toUpperCase());
         List<CurrencyRate> result = resultOptional.get();
-        if (sorting==null)
+        if (sorting == null)
             return getNotSortedRates(result, operationType);
         if (sorting.toUpperCase().equals("ASC"))
             return getSortedRatesOrderByAsc(result, operationType);
@@ -111,8 +107,7 @@ public class StartPageController {
 
     private boolean isPresentData(String currency, String operationType) {
         if (!(operationType.toUpperCase().equals("BUY") || operationType.toUpperCase().equals("SELL"))) return false;
-        if (!currencyRatesRepository.existsByName(currency.toUpperCase())) return false;
-        return true;
+        return currencyRatesRepository.existsByName(currency.toUpperCase());
     }
 
 

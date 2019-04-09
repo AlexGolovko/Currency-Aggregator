@@ -1,11 +1,8 @@
 package com.golovkobalak.repo;
 
-import com.golovkobalak.model.Bank;
+import com.golovkobalak.model.CurrencyRate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
-
-import com.golovkobalak.model.CurrencyRate;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,13 +17,11 @@ public interface CurrencyRatesRepository extends CrudRepository<CurrencyRate, Lo
 
     Optional<CurrencyRate> findFirstByNameOrderByBuyPriceAsc(String name);
 
-    
-    Optional<CurrencyRate>  findFirstByNameOrderBySellPriceDesc(String name);
+
+    Optional<CurrencyRate> findFirstByNameOrderBySellPriceDesc(String name);
 
 
-
-
-    @Query(value="SELECT Distinct d.name FROM CurrencyRate d   ")
+    @Query(value = "SELECT Distinct d.name FROM CurrencyRate d   ")
     List<String> findAllUniqueCurrencyName();
 
     boolean existsByBank_BankName(String bankName);
