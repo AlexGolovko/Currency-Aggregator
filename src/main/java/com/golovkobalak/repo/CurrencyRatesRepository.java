@@ -18,10 +18,10 @@ public interface CurrencyRatesRepository extends CrudRepository<CurrencyRate, Lo
 
     Optional<CurrencyRate> findCurrencyRateByNameAndBank_BankName(String name, String bank_bankName);
 
-    Optional<CurrencyRate> findFirstByBuyPriceOrderByBuyPriceAsc();
+    Optional<CurrencyRate> findFirstByNameOrderByBuyPriceAsc(String name);
 
-
-    Optional<CurrencyRate>  findFirstBySellPriceOrderBySellPriceAsc();
+    
+    Optional<CurrencyRate>  findFirstByNameOrderBySellPriceAsc(String name);
 
 
 
