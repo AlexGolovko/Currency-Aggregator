@@ -36,8 +36,8 @@ public class ReportController {
         for (String name : currNames) {
             CurrencyReportDTO reportDTO = new CurrencyReportDTO();
             reportDTO.setCurrencyName(name);
-            Optional<CurrencyRate> currencyRateMaxBuy = currencyRatesRepository.findFirstByBuyPriceOrderByBuyPriceAsc();
-            Optional<CurrencyRate> currencyRateMinSell = currencyRatesRepository.findFirstBySellPriceOrderBySellPriceAsc();
+            Optional<CurrencyRate> currencyRateMaxBuy = currencyRatesRepository.findFirstByNameOrderByBuyPriceAsc(name);
+            Optional<CurrencyRate> currencyRateMinSell = currencyRatesRepository.findFirstByNameOrderBySellPriceDesc(name);
             if (currencyRateMaxBuy.isPresent()) {
                 reportDTO.setBuyBank(currencyRateMaxBuy.get().getBank().getBankName());
                 reportDTO.setBuyRate(currencyRateMaxBuy.get().getBuyPrice());
